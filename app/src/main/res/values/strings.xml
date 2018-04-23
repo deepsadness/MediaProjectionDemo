@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MediaProjectionDemo</string>
+    <string name="title_activity_sc">ScActivity</string>
+</resources>
