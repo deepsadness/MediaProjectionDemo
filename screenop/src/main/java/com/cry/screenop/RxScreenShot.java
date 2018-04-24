@@ -15,7 +15,6 @@ import android.view.Surface;
 import java.nio.ByteBuffer;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -24,8 +23,8 @@ import io.reactivex.schedulers.Schedulers;
  * 截取屏幕的单利
  * Created by a2957 on 4/21/2018.
  */
-public class RxScreenShooter {
-    private String TAG = "RxScreenShooter";
+public class RxScreenShot {
+    private String TAG = "RxScreenShot";
 
     private Handler mCallBackHandler = new CallBackHandler();
     private MediaCallBack mMediaCallBack = new MediaCallBack();
@@ -37,16 +36,16 @@ public class RxScreenShooter {
     public int height = 720;
     public int dpi = 1;
 
-    private RxScreenShooter(MediaProjection mediaProjection) {
+    private RxScreenShot(MediaProjection mediaProjection) {
         this.mediaProjection =
                 mediaProjection;
     }
 
-    public static RxScreenShooter of(MediaProjection mediaProjection) {
-        return new RxScreenShooter(mediaProjection);
+    public static RxScreenShot of(MediaProjection mediaProjection) {
+        return new RxScreenShot(mediaProjection);
     }
 
-    public RxScreenShooter createImageReader() {
+    public RxScreenShot createImageReader() {
         //注意这里使用RGB565报错提示，只能使用RGBA_8888
         mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1000);
         mSurfaceFactory = new ImageReaderSurface(mImageReader);
@@ -144,8 +143,8 @@ public class RxScreenShooter {
     public static Observable<Object> shoot(FragmentActivity activity) {
         return MediaProjectionHelper
                 .requestCapture(activity)
-                .map(mediaProjection -> RxScreenShooter.of(mediaProjection).createImageReader())
-                .flatMap(RxScreenShooter::startCapture)
+                .map(mediaProjection -> RxScreenShot.of(mediaProjection).createImageReader())
+                .flatMap(RxScreenShot::startCapture)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
