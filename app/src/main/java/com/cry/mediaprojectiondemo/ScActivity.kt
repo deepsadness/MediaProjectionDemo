@@ -1,27 +1,21 @@
 package com.cry.mediaprojectiondemo
 
-import android.app.Instrumentation
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.LocalServerSocket
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.cry.acresult.ActivityResultRequest
 import com.cry.screenop.MediaProjectionHelper
-import com.cry.screenop.MpInstance
+import com.cry.screenop.RxScreenShooter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_sc.*
 import kotlinx.android.synthetic.main.content_sc.*
 import android.util.DisplayMetrics
 import com.cry.mediaprojectiondemo.socket.ServerThread
 import com.cry.mediaprojectiondemo.socket.SocketIoManager
-import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 
 
@@ -65,13 +59,8 @@ class ScActivity : AppCompatActivity() {
             Log.e("ZZX", " videoTop: " + videoTop)
             Log.e("ZZX", "videoHeight is : " + videoHeight)
 
-            MediaProjectionHelper
-                    .requestCapture(this@ScActivity)
-                    .map { MpInstance.of(it).createImageReader() }
-//                    .flatMap { it.startCaptureWithHW(videoTop, videoHeight.toInt()) }
-                    .flatMap { it.startCapture() }
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
+            RxScreenShooter
+                    .shoot(this@ScActivity)
                     .subscribe({ it ->
                         if (it is Bitmap) {
                             if (!isBack) {
@@ -88,13 +77,6 @@ class ScActivity : AppCompatActivity() {
                     }, { e -> e.printStackTrace() })
 
         }
-
-
-//        video.setVideoPath("https://1251912200.vod2.myqcloud.com/9f843d76vodgzp1251912200/19f2c7b74564972818925642439/yW6iRjw35moA.mp4")
-////        video.setVideoPath("http://27.152.191.198/c12.e.99.com/b/p/67/c4ff9f6535ac41a598bb05bf5b05b185/c4ff9f6535ac41a598bb05bf5b05b185.v.854.480.f4v")
-//        video.setOnPreparedListener { it ->
-//            it.start()
-//        }
     }
 
     private fun sendBitmap(it: Bitmap) {

@@ -1,7 +1,6 @@
 package com.cry.screenop;
 
 import android.graphics.Bitmap;
-import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.media.Image;
@@ -9,22 +8,24 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Surface;
 
 import java.nio.ByteBuffer;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
+ * 截取屏幕的单利
  * Created by a2957 on 4/21/2018.
  */
-
-public class MpInstance {
-    private String TAG = "MpInstance";
+public class RxScreenShooter {
+    private String TAG = "RxScreenShooter";
 
     private Handler mCallBackHandler = new CallBackHandler();
     private MediaCallBack mMediaCallBack = new MediaCallBack();
@@ -36,16 +37,17 @@ public class MpInstance {
     public int height = 720;
     public int dpi = 1;
 
-    private MpInstance(MediaProjection mediaProjection) {
+    private RxScreenShooter(MediaProjection mediaProjection) {
         this.mediaProjection =
                 mediaProjection;
     }
 
-    public static MpInstance of(MediaProjection mediaProjection) {
-        return new MpInstance(mediaProjection);
+    public static RxScreenShooter of(MediaProjection mediaProjection) {
+        return new RxScreenShooter(mediaProjection);
     }
 
-    public MpInstance createImageReader() {
+    public RxScreenShooter createImageReader() {
+        //注意这里使用RGB565报错提示，只能使用RGBA_8888
         mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1000);
         mSurfaceFactory = new ImageReaderSurface(mImageReader);
         createProject();
@@ -139,11 +141,19 @@ public class MpInstance {
                 });
     }
 
+    public static Observable<Object> shoot(FragmentActivity activity) {
+        return MediaProjectionHelper
+                .requestCapture(activity)
+                .map(mediaProjection -> RxScreenShooter.of(mediaProjection).createImageReader())
+                .flatMap(RxScreenShooter::startCapture)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     class MediaCallBack extends MediaProjection.Callback {
         @Override
         public void onStop() {
             super.onStop();
-
         }
     }
 
