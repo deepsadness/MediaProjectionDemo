@@ -17,9 +17,9 @@
 
 
 2. 运行App。进入
-在MainActivity，点击`Start`按钮
-进入第二个Activity时，已经回去连接socket
-最后点击右下角按钮，就可以开始了
+在MainActivity，点击`Start`按钮，就可以开始了
+进入Activity时，已经回去连接socket
+
 
 > 注意：
 1. 需要在局域网内运行。App内需要配置好Socket链接的ip. 在`SocketIoManager`内
