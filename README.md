@@ -44,7 +44,7 @@ Android在Api 21以上为我们已经提供了系统的Api可以进行操作。
 主要是这几个类的相互配合
 `MediaProjection`和`VirtualSurface`，还有截图的话，使用`ImageReader`，三个类配合使用。
 ![配套使用示意图.png](https://upload-images.jianshu.io/upload_images/1877190-91e54bd04670cd75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-```
+```java
 public RxScreenShot createImageReader() {
         //注意这里使用RGB565报错提示，只能使用RGBA_8888
         mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1000);
@@ -63,7 +63,7 @@ public RxScreenShot createImageReader() {
 
 - 获取屏幕截图
 可以通过`ImageReader`类。配套`Image`来获奖获得的数据转成Bitmap
-```
+```java
 /*
 封装成了Observable对象。
 */
@@ -179,7 +179,7 @@ public Observable<Object> startCapture() {
 
 - Android端的代码
 通过WebSocket将Bitmap的字节码发送出去
-```
+```java
     private fun sendBitmap(it: Bitmap) {
         val byteArrayOutputStream = ByteArrayOutputStream()
         it.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream)
@@ -198,7 +198,7 @@ public Observable<Object> startCapture() {
 ```
 - Node端的代码
 简单的SocketIo实现.代码在 `/sockt/io-server.js`
-```
+```javascript
 var io = require('socket.io')();
 var clients = []
 io.on('connection', function (client) {
@@ -229,7 +229,7 @@ io.listen(9000);
 #### 3. 如何将图片显示出来
 代码在 `/sockt/index.html`中
 `html`中的`src`就可以直接对传递`byte[]`的进行解析。
-```
+```javascript
  socket.on('image', function (msg) {
       var arrayBufferView = new Uint8Array(msg);
       var blob = new Blob([arrayBufferView], { type: "image/jpeg" });
