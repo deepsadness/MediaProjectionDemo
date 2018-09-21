@@ -47,7 +47,7 @@ public class RxScreenShot {
 
     public RxScreenShot createImageReader() {
         //注意这里使用RGB565报错提示，只能使用RGBA_8888
-        mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1000);
+        mImageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 5);
         mSurfaceFactory = new ImageReaderSurface(mImageReader);
         createProject();
         return this;
