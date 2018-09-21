@@ -2,6 +2,13 @@
 代码地址 ：https://github.com/deepsadness/MediaProjectionDemo
 
 ### 项目使用说明
+必须有nodejs的环境
+在./sockt目录下安装
+```
+npm install --save express@4.15.2
+npm install --save socket.io
+
+```
 
 0. 运行Node的Socket服务端
 ```
