@@ -34,7 +34,7 @@ npm install --save socket.io
 代码地址 ：https://github.com/deepsadness/MediaProjectionDemo
 
 ###效果预览
-![投屏效果预览](https://upload-images.jianshu.io/upload_images/1877190-4fd57fae28bf9b00.gif?imageMogr2/auto-orient/strip)
+![投屏效果预览](https://github.com/deepsadness/MediaProjectionDemo/blob/master/art/1877190-4fd57fae28bf9b00.gif)
 
 ###简单说明:
 1. 使用Android MediaProjection Api来完成视频的截图
