@@ -1,11 +1,11 @@
 package com.cry.mediaprojectiondemo
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import com.cry.mediaprojectiondemo.R.id.img
 import com.cry.mediaprojectiondemo.socket.ServerThread
 import com.cry.mediaprojectiondemo.socket.SocketIoManager
 import com.cry.screenop.RxScreenShot
@@ -53,6 +53,11 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     }, { e -> e.printStackTrace() })
+        }
+
+        to_recorder.setOnClickListener { _ ->
+            val intent = Intent(this@MainActivity, MainImageRecorderActivity::class.java)
+            startActivity(intent)
         }
     }
 

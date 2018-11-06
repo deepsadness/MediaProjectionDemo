@@ -36,6 +36,7 @@ public class RxScreenShot {
     public int height = 720;
     public int dpi = 1;
 
+
     private RxScreenShot(MediaProjection mediaProjection) {
         this.mediaProjection =
                 mediaProjection;
@@ -57,6 +58,10 @@ public class RxScreenShot {
         mediaProjection.registerCallback(mMediaCallBack, mCallBackHandler);
         mediaProjection.createVirtualDisplay(TAG + "-display", width, height, dpi, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC,
                 mSurfaceFactory.getInputSurface(), null, null);
+    }
+
+    public ImageReaderAvailableObservable getImageReader() {
+        return ImageReaderAvailableObservable.of(mImageReader);
     }
 
     public Observable<Object> startCapture() {
