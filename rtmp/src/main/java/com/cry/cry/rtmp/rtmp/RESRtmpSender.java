@@ -25,7 +25,7 @@ public class RESRtmpSender {
 //        if (openR == 0) {
 //        }
         serverIpAddr = RtmpClient.getIpAddr(jniRtmpPointer);
-        Log.d("zzx","serverIpAddr="+serverIpAddr);
+        Log.d("zzx", "serverIpAddr=" + serverIpAddr);
         if (jniRtmpPointer != 0) {
             RESCoreParameters coreParameters = new RESCoreParameters();
             coreParameters.mediacodecAVCFrameRate = 15;
@@ -78,11 +78,17 @@ public class RESRtmpSender {
     }
 
     public void rtmpPublish(RESFlvData flvData) {
+        if (jniRtmpPointer == 0) {
+            return;
+        }
         final int res = RtmpClient.write(jniRtmpPointer, flvData.byteBuffer, flvData.byteBuffer.length, flvData.flvTagType, flvData.dts);
         LogTools.d("RtmpClient.write res=" + res + ", length =" + flvData.byteBuffer.length);
     }
 
     public void rtmpClose() {
+        if (jniRtmpPointer == 0) {
+            return;
+        }
         int errorTime = 0;
         final int closeR = RtmpClient.close(jniRtmpPointer);
         serverIpAddr = null;
