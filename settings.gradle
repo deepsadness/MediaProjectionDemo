@@ -1,1 +1,1 @@
-include ':app', ':acresult', ':screenop'
+include ':app', ':acresult', ':screenop', ':rtmp'
