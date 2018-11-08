@@ -511,4 +511,4 @@ RMTP服务器的建立，可以简单的使用
 
 #### 投屏尝试系列文章
 - [Android PC投屏简单尝试](https://www.jianshu.com/p/ce37330365f2) 
-- [Android PC投屏简单尝试2—录屏直播]()
+- [Android PC投屏简单尝试2—录屏直播](https://www.jianshu.com/p/6dde380d9b1e)
