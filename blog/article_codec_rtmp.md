@@ -492,7 +492,7 @@ RMTP服务器的建立，可以简单的使用
 
 ## 总结
 
-####对比之前的一遍文章
+#### 对比之前的一遍文章
 [Android PC投屏简单尝试](https://www.jianshu.com/p/ce37330365f2)
 - 获取数据的方式
 都是通过MediaProjection.createVirtualDisplay的方式来获取截屏的数据。
@@ -501,10 +501,9 @@ RMTP服务器的建立，可以简单的使用
 
 - 传输协议
 上一边文章使用的webSocket，将得到的Bitmap的字节流，通过socket传输，接收方，只要接受到Socket,并且将其解析成Bitmap来展示就可以。
-优点是方便。但是缺点是，不能通用，必须编写对应的客户端才能完成。
-![简单示意图.png](https://upload-images.jianshu.io/upload_images/1877190-b384b83186935298.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+优点是方便,可以自定义协议。缺点是，不能通用，必须编写对应的客户端才能完成。
 
-这边文章使用了rtmp的流媒体协议，只要支持该协议的播放器都可以直接播放我们的投屏流。
+这边文章使用了rtmp的流媒体协议，优点是只要支持该协议的播放器都可以直接播放我们的投屏流。
 
 #### 参考文章
 [Android实现录屏直播（一）ScreenRecorder的简单分析](https://blog.csdn.net/zxccxzzxz/article/details/54150396)
