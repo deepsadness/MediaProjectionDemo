@@ -77,6 +77,7 @@ public class RESRtmpSender {
         return resFlvData;
     }
 
+    //直接发送了
     public void rtmpPublish(RESFlvData flvData) {
         if (jniRtmpPointer == 0) {
             return;

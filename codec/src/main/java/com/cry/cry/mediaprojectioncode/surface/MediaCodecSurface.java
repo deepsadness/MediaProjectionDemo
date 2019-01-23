@@ -100,11 +100,13 @@ public class MediaCodecSurface implements SurfaceFactory {
             workHanlder.postDelayed(() -> doExtract(mEncoder, new FrameCallback() {
                 @Override
                 public void render(MediaCodec.BufferInfo info, ByteBuffer outputBuffer) {
+                    //这里的Buffer，应该使用队列来进行缓存
                     Sender.getInstance().rtmpSend(info, outputBuffer);
                 }
 
                 @Override
                 public void formatChange(MediaFormat mediaFormat) {
+                    //应该这个mediaFormat直接发送了。
                     Sender.getInstance().rtmpSendFormat(mediaFormat);
                 }
             }), 1000);

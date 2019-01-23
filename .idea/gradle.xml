@@ -10,6 +10,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/acresult" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/codec" />
+            <option value="$PROJECT_DIR$/rtmp" />
             <option value="$PROJECT_DIR$/screenop" />
           </set>
         </option>

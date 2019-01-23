@@ -3,10 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MediaProjectionDemo.iml" filepath="$PROJECT_DIR$/MediaProjectionDemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/screenop/MediaProjectionDemo-screenop.iml" filepath="$PROJECT_DIR$/screenop/MediaProjectionDemo-screenop.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WorkSpace-MediaProjectionDemo.iml" filepath="$PROJECT_DIR$/WorkSpace-MediaProjectionDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/acresult/acresult.iml" filepath="$PROJECT_DIR$/acresult/acresult.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/codec/codec.iml" filepath="$PROJECT_DIR$/codec/codec.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rtmp/rtmp.iml" filepath="$PROJECT_DIR$/rtmp/rtmp.iml" />
       <module fileurl="file://$PROJECT_DIR$/screenop/screenop.iml" filepath="$PROJECT_DIR$/screenop/screenop.iml" />
     </modules>
   </component>
