@@ -41,7 +41,8 @@ public class RecordActivity extends AppCompatActivity {
     //    String url = "rtmp://localhost/live/";
 //    String url = "rtmp://localhost/live/STREAM_NAME";
 //    String url = "rtmp://169.254.8.220/live/STREAM_NAME";
-    String url = "rtmp://192.168.1.163/live/STREAM_NAME";
+    String url = "rtmp://192.168.1.163/live/room";
+//    String url = "rtmp://193.112.38.69:1935/live/room";
     private Timer timer;
     private TextView mCountText;
 

@@ -3,6 +3,7 @@ package com.cry.cry.mediaprojectioncode.surface;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -16,20 +17,49 @@ import com.cry.cry.mediaprojectioncode.sender.Sender;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
+import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ;
+import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR;
+
+/**
+ * 关于
+ * 关键帧。
+ * FRAME_RATE = 15;  IFRAME_INTERVAL = 2;    BIT_RATE = 2 * 1024 * 1024 * 3
+ *
+ * 在华为P20上，
+ * 滑动的时候是  500ms 一个关键字。
+ * 如果基本不滑动的时候 是 14000 ms~15000ms 一起。
+ *
+ * 当设置 FRAME_RATE 30,其他不变时。
+ * 滑动的时候是  1000ms 一个关键字。
+ * 如果基本不滑动的时候 是 24000 ms~25000ms 一起。
+ *
+ * 当设置 IFRAME_INTERVAL 1,其他不变时。
+ * 滑动的时候是  250ms 一个关键字。
+ * 如果基本不滑动的时候 是 7000 ms~8000ms 一起。
+ *
+ * 也就是说 内部做了优化，只有图像变化巨大的时候，才会进行编码I帧吗？
+ *
+ */
 public class MediaCodecSurface implements SurfaceFactory {
     private static final String TAG = "MediaCodecSurface";
     private static final boolean VERBOSE = true;
 
     private static final String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
     private static final int FRAME_RATE = 15;               // 30fps
-    private static final int IFRAME_INTERVAL = 5;           // 5 seconds between I-frames
-    private static final int BIT_RATE = 800000;           // 5 seconds between I-frames
+    private static final int IFRAME_INTERVAL = 2;           //  seconds between I-frames
+    //    private static final int BIT_RATE = 800_000;
+//    private static final int BIT_RATE = 480 * 720 * 3;
+//    private static final int BIT_RATE = 480 * 720 * 3 * FRAME_RATE;
+    private static final int BIT_RATE = 2 * 1024 * 1024 * 3;           // 2M
 
     private Surface mInputSurface;
     private MediaCodec mEncoder;
     private MediaCodec.BufferInfo mBufferInfo;
     private volatile boolean mIsStopRequested;
     private Handler workHanlder;
+    private long lastNesc;
+    private long lastKeyFrameNesc;
 
     public MediaCodecSurface() {
         createEncoderThread();
@@ -49,10 +79,10 @@ public class MediaCodecSurface implements SurfaceFactory {
         MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, width, height);
         //还需要对器进行插值。设置自己设置的一些变量
         //设置ColorFormat??
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
+//        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+//        format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
+//        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+//        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
         //对profile进行插值
 //        if (codecProfileLevel != null && codecProfileLevel.profile != 0 && codecProfileLevel.level != 0) {
 //            format.setInteger(MediaFormat.KEY_PROFILE, codecProfileLevel.profile);
@@ -60,6 +90,9 @@ public class MediaCodecSurface implements SurfaceFactory {
 //        }
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        //使用BITRATE
+        format.setInteger(MediaFormat.KEY_BITRATE_MODE, BITRATE_MODE_VBR);
+
         format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
@@ -157,6 +190,10 @@ public class MediaCodecSurface implements SurfaceFactory {
                 if (frameCallback != null) {
                     frameCallback.formatChange(newFormat);
                 }
+                //设置
+//                Bundle param = new Bundle();
+//                param.putInt(MediaCodec.PARAMETER_KEY_VIDEO_BITRATE, BIT_RATE);
+//                mEncoder.setParameters(param);
             } else if (decoderStatus < 0) {
                 throw new RuntimeException(
                         "unexpected result from decoder.dequeueOutputBuffer: " +
@@ -176,6 +213,20 @@ public class MediaCodecSurface implements SurfaceFactory {
                     outputDone = true;
                 }
 
+
+//                requestInterval();
+//                boolean keyFrame = (mBufferInfo.flags & MediaCodec.BUFFER_FLAG_KEY_FRAME) != 0;
+                if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_KEY_FRAME) != 0) {
+                    long nowNsec = System.nanoTime();
+                    if (lastNesc == 0) {
+                        lastNesc = nowNsec;
+                    }
+                    long diff = nowNsec - lastNesc;
+                    lastNesc = nowNsec;
+                    //这种是关键帧
+                    Log.d("zzx", "MediaCodec.BUFFER_FLAG_KEY_FRAME ,diff time = " + (diff / 1000000.0) + " ms");
+                }
+
                 boolean doRender = (mBufferInfo.size != 0);
 
                 if (doRender && frameCallback != null) {
@@ -184,6 +235,23 @@ public class MediaCodecSurface implements SurfaceFactory {
                 }
                 encoder.releaseOutputBuffer(decoderStatus, doRender);
             }
+        }
+    }
+
+    //在真机上是可以用的。。。泪目。。
+    //通过这个方式后，上面的设置就没用了。
+    private void requestInterval() {
+        long nowNsec = System.nanoTime();
+        if (lastKeyFrameNesc == 0) {
+            lastKeyFrameNesc = nowNsec;
+        }
+        long diff = nowNsec - lastKeyFrameNesc;
+        if (diff / 1000000.0 > 1000 * 5) { //5s
+            Log.d("zzx", "PARAMETER_KEY_REQUEST_SYNC_FRAME ,diff =" + (diff / 1000000.0));
+            Bundle bundle = new Bundle();
+            bundle.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
+            mEncoder.setParameters(bundle);
+            lastKeyFrameNesc = nowNsec;
         }
     }
 
